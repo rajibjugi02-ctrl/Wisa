@@ -90,8 +90,8 @@ const DEFAULT_SETTINGS: AppSettings = {
 
   aiProvider: "Gemini",
   preferredAiModel: "gemini-2.5-flash",
-  geminiApiKey: "",
-  openaiApiKey: "",
+  geminiApiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || "",
+  openaiApiKey: (import.meta.env.VITE_OPENAI_API_KEY as string) || "",
   aiTemperature: 0.7,
 };
 
@@ -116,7 +116,15 @@ export function App() {
       const saved =
         localStorage.getItem("wisa_settings") ||
         localStorage.getItem("nusa_settings");
-      if (saved) return { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...DEFAULT_SETTINGS,
+          ...parsed,
+          geminiApiKey: parsed.geminiApiKey || DEFAULT_SETTINGS.geminiApiKey,
+          openaiApiKey: parsed.openaiApiKey || DEFAULT_SETTINGS.openaiApiKey,
+        };
+      }
     } catch {
       // fallback
     }

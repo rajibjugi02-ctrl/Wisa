@@ -141,7 +141,7 @@ export async function* streamLiveAiResponse(
     {
       role: "system",
       content:
-        "You are Nusa AI, an intelligent, helpful assistant running natively inside the Windows smart notch. Be concise, direct, and pleasant.",
+        "You are Wisa AI, an intelligent, helpful assistant running natively inside the Windows smart notch. Be concise, direct, and pleasant.",
     },
     ...history.slice(-8).map((m) => ({
       role: m.sender as "user" | "assistant",
