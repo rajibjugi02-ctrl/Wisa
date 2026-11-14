@@ -7,6 +7,7 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
+  Power,
 } from "lucide-react";
 import {
   AppSettings,
@@ -233,6 +234,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     return arr[(idx - 1 + arr.length) % arr.length];
   };
 
+  const handleQuitApp = async () => {
+    try {
+      const tauri = (window as any).__TAURI__;
+      if (tauri?.core?.invoke) {
+        await tauri.core.invoke("exit_app");
+        return;
+      }
+    } catch (err) {
+      console.warn("Failed to invoke exit_app:", err);
+    }
+    window.close();
+  };
+
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
@@ -331,6 +345,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     />
                   </SettingsRow>
                 </SettingsGroup>
+
+                <div className="mt-8 pt-4 border-t border-white/[0.08]">
+                  <button
+                    type="button"
+                    onClick={handleQuitApp}
+                    className="w-full py-2.5 px-4 rounded-xl bg-[#FF453A]/15 hover:bg-[#FF453A]/25 text-[#FF453A] border border-[#FF453A]/20 font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                  >
+                    <Power className="w-4 h-4" />
+                    <span>Quit Wisa</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -934,6 +959,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <span className="text-white/60">Rajib</span>
                   </div>
                 </SettingsGroup>
+
+                <div className="mt-8 pt-4 border-t border-white/[0.08]">
+                  <button
+                    type="button"
+                    onClick={handleQuitApp}
+                    className="w-full py-2.5 px-4 rounded-xl bg-[#FF453A]/15 hover:bg-[#FF453A]/25 text-[#FF453A] border border-[#FF453A]/20 font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                  >
+                    <Power className="w-4 h-4" />
+                    <span>Quit Wisa</span>
+                  </button>
+                </div>
               </div>
             )}
           </main>

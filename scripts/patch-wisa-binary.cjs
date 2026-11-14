@@ -56,3 +56,4 @@ if (buf[0x54d17] === 0x0f && buf[0x54d17 + 1] === 0x84) {
 // 5. Save patched binary
 fs.writeFileSync(exePath, buf);
 console.log('Successfully saved patched wisa.exe!');
+

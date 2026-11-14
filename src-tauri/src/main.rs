@@ -5,6 +5,13 @@ mod smtc;
 mod window_manager;
 
 use tauri::{AppHandle, command};
+use tauri::menu::{Menu, MenuItem};
+use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
+
+#[command]
+async fn exit_app() -> Result<(), String> {
+    std::process::exit(0);
+}
 
 #[command]
 async fn set_notch_size(app: AppHandle, width: u32, height: u32) -> Result<(), String> {
@@ -106,6 +113,47 @@ async fn set_autostart_status(enable: bool) -> Result<bool, String> {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            let _ = window_manager::show_settings_window(app);
+        }))
+        .setup(|app| {
+            let settings_item = MenuItem::with_id(app, "settings", "Open Wisa Settings", true, None::<&str>)?;
+            let toggle_item = MenuItem::with_id(app, "toggle_notch", "Toggle Minimalist Mode", true, None::<&str>)?;
+            let restart_item = MenuItem::with_id(app, "restart", "Restart Wisa", true, None::<&str>)?;
+            let quit_item = MenuItem::with_id(app, "quit", "Quit Wisa", true, None::<&str>)?;
+
+            let menu = Menu::with_items(app, &[&settings_item, &toggle_item, &restart_item, &quit_item])?;
+
+            let _tray = TrayIconBuilder::new()
+                .menu(&menu)
+                .tooltip("Wisa Smart Notch")
+                .on_menu_event(|app, event| match event.id.as_ref() {
+                    "quit" => {
+                        std::process::exit(0);
+                    }
+                    "settings" => {
+                        let _ = window_manager::show_settings_window(app);
+                    }
+                    "restart" => {
+                        app.restart();
+                    }
+                    _ => {}
+                })
+                .on_tray_icon_event(|tray, event| {
+                    if let TrayIconEvent::Click {
+                        button: MouseButton::Left,
+                        button_state: MouseButtonState::Up,
+                        ..
+                    } = event
+                    {
+                        let app = tray.app_handle();
+                        let _ = window_manager::show_settings_window(app);
+                    }
+                })
+                .build(app)?;
+
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             set_notch_size,
             open_settings_window,
@@ -117,6 +165,7 @@ fn main() {
             poll_notifications,
             get_autostart_status,
             set_autostart_status,
+            exit_app,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
