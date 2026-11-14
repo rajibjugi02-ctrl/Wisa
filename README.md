@@ -1,6 +1,16 @@
 # Wisa — A Living Notch for Windows
 
 <p align="center">
+  <a href="https://rajibjugi02-ctrl.github.io/Wisa/">
+    <img src="https://img.shields.io/badge/%F0%9F%8C%90%20Open%20Wisa%20Official%20Website%20%26%20Download-https%3A%2F%2Frajibjugi02--ctrl.github.io%2FWisa%2F-0A84FF?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open Official Website" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://rajibjugi02-ctrl.github.io/Wisa/"><strong>🌐 https://rajibjugi02-ctrl.github.io/Wisa/</strong></a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Windows-10%20%7C%2011%20(64--bit)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows Support" />
   <img src="https://img.shields.io/badge/Built%20With-Rust%20%2B%20Tauri%20v2-orange?style=for-the-badge&logo=rust&logoColor=white" alt="Rust Tauri" />
   <img src="https://img.shields.io/badge/Frontend-React%20%2B%20Tailwind-38bdf8?style=for-the-badge&logo=react&logoColor=white" alt="React Tailwind" />

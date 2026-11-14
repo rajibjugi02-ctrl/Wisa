@@ -1,0 +1,58 @@
+name: Release Wisa for Windows
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Build Tauri Desktop App & Create GitHub Release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v1.2.0
+          releaseName: "Wisa v1.2.0 — Windows Desktop Release"
+          releaseBody: |
+            ## Wisa 1.2.0 for Windows 10 & 11 (64-bit)
+
+            ### ✨ What's New in v1.2.0:
+            - **Real Windows SMTC Integration**: Controls Spotify, Apple Music, and YouTube media.
+            - **Synced Lyrics from LRCLIB**: Live line-by-line sync with dynamic notch width.
+            - **Live AI Assistant**: Real-time token streaming from Google Gemini & OpenAI GPT-4o.
+            - **Real Windows Autostart**: Native registry startup synchronization.
+            - **Prayer Times & Sun Arc**: 5 daily prayer times with Indonesian Kemenag calculation.
+            - **File Shelf & Dropzone**: Quick drag-and-drop staging at the top of your screen.
+            - **Top-Center Scaling**: Proportional scaling that never cuts off the bottom dock.
+
+            ### 📦 Included Downloads:
+            - **Installer**: `Wisa-Setup.exe` / `.msi`
+            - **Portable**: `Wisa-portable.zip`
+          releaseDraft: false
+          prerelease: false
+

@@ -4,7 +4,6 @@ import { IslandContainer } from "./components/island/IslandContainer";
 import { SettingsModal } from "./components/settings/SettingsModal";
 import { LandingPage } from "./pages/LandingPage";
 import { isTauriEnvironment } from "./lib/tauri-bridge";
-import { Image as ImageIcon, Sliders, Globe, Monitor } from "lucide-react";
 
 const DEFAULT_SETTINGS: AppSettings = {
   launchOnStartup: true,
@@ -102,12 +101,15 @@ export function App() {
     typeof window !== "undefined"
       ? new URLSearchParams(window.location.search)
       : null;
-  const forceWeb = searchParams?.get("web") === "true";
+  const forceWeb =
+    searchParams?.get("web") === "true" || searchParams?.get("view") === "website";
   const forceNotch =
-    searchParams?.get("notch") === "true" || searchParams?.get("app") === "true";
-  const isDesktopNotch = (isTauri || forceNotch) && !forceWeb;
+    searchParams?.get("notch") === "true" ||
+    searchParams?.get("app") === "true" ||
+    searchParams?.get("view") === "notch";
 
-  const [viewMode, setViewMode] = useState<"showcase" | "desktop">("showcase");
+  // Desktop Notch is rendered when inside Tauri app or explicitly tested with ?view=notch
+  const isDesktopNotch = (isTauri || forceNotch) && !forceWeb;
 
   const [settings, setSettings] = useState<AppSettings>(() => {
     try {
@@ -121,8 +123,17 @@ export function App() {
     return DEFAULT_SETTINGS;
   });
 
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [browserWallpaperIndex, setBrowserWallpaperIndex] = useState(0);
+  // On first run inside the desktop Tauri app, open SettingsModal automatically
+  const [isSettingsOpen, setIsSettingsOpen] = useState(() => {
+    if (isTauri) {
+      const hasOpened = localStorage.getItem("wisa_first_run_settings");
+      if (!hasOpened) {
+        localStorage.setItem("wisa_first_run_settings", "true");
+        return true;
+      }
+    }
+    return false;
+  });
 
   useEffect(() => {
     try {
@@ -139,13 +150,7 @@ export function App() {
     setSettings((prev) => ({ ...prev, [key]: val }));
   };
 
-  const wallpapers = [
-    "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1920&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1920&auto=format&fit=crop&q=80",
-  ];
-
-  // If in desktop Tauri app or requested ?notch=true, render the floating island directly
+  // State 1: Native Windows Desktop App (Tauri / Wisa.exe)
   if (isDesktopNotch) {
     return (
       <div className="relative min-h-screen w-full select-none overflow-hidden bg-transparent">
@@ -167,96 +172,9 @@ export function App() {
     );
   }
 
-  // Web Browser environment: Showcase Website or Desktop Preview
-  if (viewMode === "showcase") {
-    return (
-      <div className="relative min-h-screen w-full bg-[#09090b]">
-        <LandingPage
-          onSwitchToDesktopPreview={() => setViewMode("desktop")}
-        />
-
-        {/* Floating Quick Action to Preview Desktop Mode */}
-        <aside
-          aria-label="Mode Switcher"
-          className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-black/70 backdrop-blur-xl border border-white/20 px-3.5 py-2 rounded-full text-xs text-white shadow-2xl"
-        >
-          <button
-            type="button"
-            onClick={() => setViewMode("desktop")}
-            className="flex items-center gap-1.5 text-cyan-300 hover:text-white transition-colors font-medium"
-            title="Preview standalone floating notch over desktop wallpaper"
-          >
-            <Monitor className="h-3.5 w-3.5" />
-            <span>Open Desktop Notch View</span>
-          </button>
-        </aside>
-      </div>
-    );
-  }
-
-  // Standalone Desktop Wallpaper Preview in Browser
-  return (
-    <div
-      className="relative min-h-screen w-full select-none overflow-hidden transition-all duration-700 bg-cover bg-center"
-      style={{
-        backgroundImage: `url(${wallpapers[browserWallpaperIndex]})`,
-      }}
-    >
-      <main className="w-full flex justify-center items-start pt-1.5 z-40 relative">
-        <IslandContainer
-          settings={settings}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          onUpdateSetting={updateSetting}
-        />
-      </main>
-
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        settings={settings}
-        onUpdateSetting={updateSetting}
-      />
-
-      <aside
-        aria-label="Preview Controls"
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-black/70 backdrop-blur-xl border border-white/15 px-3 py-1.5 rounded-full text-xs text-white shadow-2xl"
-      >
-        <button
-          type="button"
-          onClick={() => setViewMode("showcase")}
-          className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 transition-colors px-2 py-0.5 rounded-md hover:bg-white/10 font-semibold"
-          title="Return to the Wisa official showcase website"
-        >
-          <Globe className="h-3.5 w-3.5" />
-          <span>Website Showcase</span>
-        </button>
-
-        <span className="w-[1px] h-3 bg-white/20" />
-
-        <button
-          type="button"
-          onClick={() =>
-            setBrowserWallpaperIndex((prev) => (prev + 1) % wallpapers.length)
-          }
-          className="flex items-center gap-1 hover:text-blue-300 transition-colors px-2 py-0.5 rounded-md hover:bg-white/10"
-          title="Switch background wallpaper to test glassmorphism"
-        >
-          <ImageIcon className="h-3 w-3" />
-          <span>Wallpaper</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setIsSettingsOpen(true)}
-          className="flex items-center gap-1 hover:text-blue-300 transition-colors px-2 py-0.5 rounded-md hover:bg-white/10"
-          title="Open Settings"
-        >
-          <Sliders className="h-3 w-3" />
-          <span>Settings</span>
-        </button>
-      </aside>
-    </div>
-  );
+  // State 2: Official Wisa Product Website (Browser / GitHub Pages)
+  // Clean showcase without any floating developer controls
+  return <LandingPage />;
 }
 
 export default App;

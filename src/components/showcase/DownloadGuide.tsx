@@ -44,7 +44,7 @@ export const DownloadGuide: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-16">
         {/* Installer (.EXE / .MSI) */}
         <a
-          href="https://github.com/rajibjugi02-ctrl/Wisa/releases/latest"
+          href="https://github.com/rajibjugi02-ctrl/Wisa/releases/latest/download/Wisa-Setup.exe"
           target="_blank"
           rel="noopener noreferrer"
           className="bg-gradient-to-b from-white to-neutral-200 text-black hover:brightness-105 active:scale-[0.98] transition-all p-6 rounded-2xl shadow-xl flex flex-col justify-between group"
@@ -58,7 +58,7 @@ export const DownloadGuide: React.FC = () => {
             </div>
             <h3 className="text-lg font-bold tracking-tight">Download Installer</h3>
             <p className="text-xs text-black/70 mt-1">
-              WisaSetup-1.2.0.exe (~5.2 MB)
+              Wisa-Setup.exe (~5.2 MB)
             </p>
           </div>
           <div className="mt-6 pt-3 border-t border-black/10 text-xs font-semibold text-black/80 flex items-center justify-between">
@@ -69,7 +69,7 @@ export const DownloadGuide: React.FC = () => {
 
         {/* Portable (.ZIP) */}
         <a
-          href="https://github.com/rajibjugi02-ctrl/Wisa/releases"
+          href="https://github.com/rajibjugi02-ctrl/Wisa/releases/latest/download/Wisa-portable.zip"
           target="_blank"
           rel="noopener noreferrer"
           className="bg-[#1c1c20] hover:bg-[#24242a] text-white border border-white/10 hover:border-white/25 active:scale-[0.98] transition-all p-6 rounded-2xl shadow-xl flex flex-col justify-between group"

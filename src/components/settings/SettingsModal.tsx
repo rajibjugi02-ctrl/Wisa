@@ -893,19 +893,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
 
                   <div className="flex items-center justify-between px-4 py-3 text-[13px] text-white">
-                    <span className="font-medium text-white select-none">GitHub</span>
-                    <a
-                      href="https://github.com/rajibjugi02-ctrl/Wisa"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-white/50 hover:text-white transition-colors"
-                    >
-                      <span>github.com/rajibjugi02-ctrl/Wisa</span>
-                      <ChevronRight className="w-4 h-4 text-white/40" />
-                    </a>
-                  </div>
-
-                  <div className="flex items-center justify-between px-4 py-3 text-[13px] text-white">
                     <span className="font-medium text-white select-none">Lyrics</span>
                     <a
                       href="https://lrclib.net"

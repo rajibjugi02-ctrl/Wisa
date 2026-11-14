@@ -8,13 +8,7 @@ import { CustomizationSection } from "../components/showcase/CustomizationSectio
 import { DownloadGuide } from "../components/showcase/DownloadGuide";
 import { FeedbackAndFaq } from "../components/showcase/FeedbackAndFaq";
 
-interface LandingPageProps {
-  onSwitchToDesktopPreview?: () => void;
-}
-
-export const LandingPage: React.FC<LandingPageProps> = ({
-  onSwitchToDesktopPreview,
-}) => {
+export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#09090b] text-white selection:bg-cyan-500/30 selection:text-cyan-200 font-sans">
       {/* 1. Sticky Navigation Bar */}
@@ -59,16 +53,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         {/* Actions */}
         <div className="flex items-center gap-2.5">
-          {onSwitchToDesktopPreview && (
-            <button
-              type="button"
-              onClick={onSwitchToDesktopPreview}
-              className="text-xs px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 transition-all hidden sm:inline-block"
-            >
-              Floating Notch Mode
-            </button>
-          )}
-
           <a
             href="https://github.com/rajibjugi02-ctrl/Wisa"
             target="_blank"
