@@ -97,6 +97,11 @@ const DEFAULT_SETTINGS: AppSettings = {
 
 export function App() {
   const isTauri = isTauriEnvironment();
+  const isElectron =
+    typeof window !== "undefined" &&
+    (Boolean((window as any).electron) ||
+      Boolean((window as any).process?.versions?.electron) ||
+      navigator.userAgent.toLowerCase().includes("electron"));
   const searchParams =
     typeof window !== "undefined"
       ? new URLSearchParams(window.location.search)
@@ -108,8 +113,8 @@ export function App() {
     searchParams?.get("app") === "true" ||
     searchParams?.get("view") === "notch";
 
-  // Desktop Notch is rendered when inside Tauri app or explicitly tested with ?view=notch
-  const isDesktopNotch = (isTauri || forceNotch) && !forceWeb;
+  // Desktop Notch is rendered when inside Tauri app, Electron desktop app, or explicitly tested with ?view=notch
+  const isDesktopNotch = (isTauri || isElectron || forceNotch) && !forceWeb;
 
   const [settings, setSettings] = useState<AppSettings>(() => {
     try {
@@ -131,9 +136,9 @@ export function App() {
     return DEFAULT_SETTINGS;
   });
 
-  // On first run inside the desktop Tauri app, open SettingsModal automatically
+  // On first run inside the desktop app, open SettingsModal automatically
   const [isSettingsOpen, setIsSettingsOpen] = useState(() => {
-    if (isTauri) {
+    if (isTauri || isElectron) {
       const hasOpened = localStorage.getItem("wisa_first_run_settings");
       if (!hasOpened) {
         localStorage.setItem("wisa_first_run_settings", "true");
@@ -150,6 +155,18 @@ export function App() {
       // ignore
     }
   }, [settings]);
+
+  useEffect(() => {
+    const electron = (window as any).electron;
+    if (electron?.onOpenSettings) {
+      electron.onOpenSettings(() => setIsSettingsOpen(true));
+    }
+    if (electron?.onToggleMinimalist) {
+      electron.onToggleMinimalist(() => {
+        setSettings((prev) => ({ ...prev, minimalNotch: !prev.minimalNotch }));
+      });
+    }
+  }, []);
 
   const updateSetting = <K extends keyof AppSettings>(
     key: K,

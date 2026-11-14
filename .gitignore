@@ -6,6 +6,9 @@ node_modules/
 # Build outputs
 dist/
 dist-ssr/
+release-electron/
+public/*.exe
+public/*.zip
 *.local
 /wisa.exe
 

@@ -30,31 +30,54 @@ jobs:
       - name: Install Node dependencies
         run: npm install
 
-      - name: Build frontend assets
+      - name: Build React / Vite frontend
         run: npm run build
 
-      - name: Build Tauri Desktop App & Create GitHub Release
-        uses: tauri-apps/tauri-action@v0
+      - name: Compile True Wisa Desktop App with Tauri v2
+        run: npx @tauri-apps/cli build
+
+      - name: Stage Release Artifacts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path "release-dist" -Force
+          $nsisExe = Get-ChildItem -Path "src-tauri/target/release/bundle/nsis/*.exe" | Select-Object -First 1
+          if ($nsisExe) {
+            Copy-Item $nsisExe.FullName "release-dist/Wisa-Setup.exe" -Force
+          }
+          $msiFile = Get-ChildItem -Path "src-tauri/target/release/bundle/msi/*.msi" | Select-Object -First 1
+          if ($msiFile) {
+            Copy-Item $msiFile.FullName "release-dist/Wisa.msi" -Force
+          }
+          $rawExe = "src-tauri/target/release/wisa-notch.exe"
+          if (Test-Path $rawExe) {
+            tar -acf "release-dist/Wisa-portable.zip" -C "src-tauri/target/release" "wisa-notch.exe"
+          }
+          Get-ChildItem "release-dist"
+
+      - name: Create or Update GitHub Release
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v1.2.0
-          releaseName: "Wisa v1.2.0 — Windows Desktop Release"
-          releaseBody: |
+          tag_name: v1.2.0
+          name: "Wisa v1.2.0 — True Windows Desktop Release"
+          body: |
             ## Wisa 1.2.0 for Windows 10 & 11 (64-bit)
+            
+            Built 100% from genuine React/TypeScript source code by Rajib.
 
-            ### ✨ What's New in v1.2.0:
-            - **Real Windows SMTC Integration**: Controls Spotify, Apple Music, and YouTube media.
-            - **Synced Lyrics from LRCLIB**: Live line-by-line sync with dynamic notch width.
-            - **Live AI Assistant**: Real-time token streaming from Google Gemini & OpenAI GPT-4o.
-            - **Real Windows Autostart**: Native registry startup synchronization.
-            - **Prayer Times & Sun Arc**: 5 daily prayer times with Indonesian Kemenag calculation.
-            - **File Shelf & Dropzone**: Quick drag-and-drop staging at the top of your screen.
-            - **Top-Center Scaling**: Proportional scaling that never cuts off the bottom dock.
+            ### ✨ Key Features:
+            - **Original Wisa Notch**: Sleek VisionOS glassmorphism with top-center scaling.
+            - **8 Clean Settings Tabs**: General, Music and lyrics, Timer & Pomodoro, To-do, Prayer, Shelf, AI Assistant, About (Zero PRO locks).
+            - **6 Bottom Capsule Dock Tabs**: Music, Timer, Shelf, To-do, Prayer, AI Assistant.
+            - **Real SMTC & Synced Lyrics**: Spotify, Apple Music & LRCLIB integration.
+            - **Live AI Assistant**: Real token streaming from Google Gemini & OpenAI.
+            - **Single-Instance Protection**: Prevents multiple processes running simultaneously.
+            - **System Tray & Quit Button**: Close anytime directly from tray or Settings.
 
-            ### 📦 Included Downloads:
-            - **Installer**: `Wisa-Setup.exe` / `.msi`
+            ### 📦 Downloads:
+            - **Installer**: `Wisa-Setup.exe` / `Wisa.msi`
             - **Portable**: `Wisa-portable.zip`
-          releaseDraft: false
+          files: release-dist/*
+          draft: false
           prerelease: false
-

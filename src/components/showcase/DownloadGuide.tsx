@@ -39,12 +39,11 @@ export const DownloadGuide: React.FC = () => {
       </div>
 
       {/* 2 Primary Download Pills (Nusa 1:1 Layout) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-16 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8 items-start">
         {/* Left: Direct EXE Installer */}
         <div className="flex flex-col items-center">
           <a
-            href="./WisaSetup.exe"
-            download="WisaSetup.exe"
+            href="https://github.com/rajibjugi02-ctrl/Wisa/releases/download/v1.2.0/Wisa-Setup.exe"
             className="w-full py-3.5 px-6 rounded-full bg-white text-black font-bold text-sm sm:text-base hover:bg-neutral-100 active:scale-[0.98] transition-all shadow-[0_10px_30px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2.5 group cursor-pointer"
           >
             <Download className="w-4 h-4 sm:w-5 sm:h-5 text-black group-hover:translate-y-0.5 transition-transform" />
@@ -55,7 +54,7 @@ export const DownloadGuide: React.FC = () => {
               Direct Installer • <span className="text-emerald-400 font-bold">Recommended</span>
             </p>
             <p className="text-[11px] text-white/50 mt-1 max-w-xs leading-normal">
-              Direct setup application (~2.9 MB). Fast setup, no unzipping required.
+              Official setup executable (~5.2 MB). Fast setup, desktop shortcut, no unzipping required.
             </p>
           </div>
         </div>
@@ -63,8 +62,7 @@ export const DownloadGuide: React.FC = () => {
         {/* Right: Direct ZIP Download (Nusa style) */}
         <div className="flex flex-col items-center">
           <a
-            href="./WisaSetup.zip"
-            download="WisaSetup.zip"
+            href="https://github.com/rajibjugi02-ctrl/Wisa/releases/download/v1.2.0/Wisa-portable.zip"
             className="w-full py-3.5 px-6 rounded-full bg-[#16161b] text-white border border-white/20 hover:border-cyan-400/60 hover:bg-[#202028] active:scale-[0.98] transition-all shadow-xl flex items-center justify-center gap-2.5 group cursor-pointer"
           >
             <FolderArchive className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 group-hover:translate-y-0.5 transition-transform" />
@@ -72,13 +70,24 @@ export const DownloadGuide: React.FC = () => {
           </a>
           <div className="mt-3 text-center">
             <p className="text-xs font-semibold text-white">
-              Version 1.2.0 • <span className="text-cyan-400 font-bold">Classic installer</span>
+              Version 1.2.0 • <span className="text-cyan-400 font-bold">Classic portable</span>
             </p>
             <p className="text-[11px] text-white/50 mt-1 max-w-xs leading-normal">
-              For PCs without Microsoft Store. Contains WisaSetup.exe inside ZIP (~2.4 MB).
+              Portable package inside ZIP (~4.8 MB). Extract and run anywhere without installing.
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Portable option link */}
+      <div className="text-center mb-16">
+        <a
+          href="https://github.com/rajibjugi02-ctrl/Wisa/releases/download/v1.2.0/Wisa-portable.zip"
+          className="inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-cyan-400 transition-colors"
+        >
+          <FolderArchive className="w-3.5 h-3.5" />
+          <span>Need a standalone version? Download Portable ZIP (No install required)</span>
+        </a>
       </div>
 
       {/* How to Install & Use (4-Step Numbered Cards) */}
