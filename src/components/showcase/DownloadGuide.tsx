@@ -1,13 +1,11 @@
 import React from "react";
 import {
   Download,
+  FolderArchive,
   ShieldCheck,
-  CheckCircle,
-  FolderDown,
-  MonitorPlay,
-  Sliders,
-  Sparkles,
+  CheckCircle2,
   ExternalLink,
+  Sparkles,
 } from "lucide-react";
 
 export const DownloadGuide: React.FC = () => {
@@ -17,17 +15,17 @@ export const DownloadGuide: React.FC = () => {
       className="w-full max-w-5xl mx-auto px-4 py-24 select-none border-t border-white/[0.08]"
     >
       {/* Center Mascot & Header */}
-      <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-14">
-        {/* Glowing Wisa Mascot Avatar */}
-        <div className="w-20 h-20 rounded-2xl bg-gradient-to-b from-[#25252c] to-[#121216] border border-white/20 p-2 shadow-2xl flex items-center justify-center relative overflow-hidden mb-5">
+      <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-12">
+        {/* Glowing Wisa Mascot Avatar (Matching Nusa's squircle) */}
+        <div className="w-20 h-20 rounded-3xl bg-gradient-to-b from-[#2a2a34] via-[#1a1a22] to-[#0e0e12] border border-white/20 p-2 shadow-[0_0_50px_rgba(56,189,248,0.3)] flex items-center justify-center relative overflow-hidden mb-6">
           <div className="relative w-14 h-12 flex items-center justify-center">
             {/* Left & Right Ears */}
-            <div className="absolute -top-1 left-1.5 w-3 h-3 bg-indigo-500 rounded-tl-full shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
-            <div className="absolute -top-1 right-1.5 w-3 h-3 bg-indigo-500 rounded-tr-full shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
+            <div className="absolute -top-1 left-1.5 w-3.5 h-3.5 bg-gradient-to-tr from-indigo-500 to-cyan-400 rounded-tl-full shadow-[0_0_10px_rgba(99,102,241,0.9)]" />
+            <div className="absolute -top-1 right-1.5 w-3.5 h-3.5 bg-gradient-to-tl from-indigo-500 to-cyan-400 rounded-tr-full shadow-[0_0_10px_rgba(99,102,241,0.9)]" />
             {/* Head Capsule */}
-            <div className="w-13 h-9 bg-black rounded-xl border border-white/20 shadow-inner flex items-center justify-center gap-3">
-              <div className="w-2.5 h-3 bg-cyan-400 rounded-full shadow-[0_0_8px_#38bdf8] animate-pulse" />
-              <div className="w-2.5 h-3 bg-cyan-400 rounded-full shadow-[0_0_8px_#38bdf8] animate-pulse" />
+            <div className="w-13 h-9 bg-black/90 rounded-xl border border-white/20 shadow-inner flex items-center justify-center gap-3">
+              <div className="w-2.5 h-3 bg-cyan-400 rounded-full shadow-[0_0_10px_#38bdf8] animate-pulse" />
+              <div className="w-2.5 h-3 bg-cyan-400 rounded-full shadow-[0_0_10px_#38bdf8] animate-pulse" />
             </div>
           </div>
         </div>
@@ -36,61 +34,51 @@ export const DownloadGuide: React.FC = () => {
           Get Wisa for Windows
         </h2>
         <p className="mt-3 text-sm sm:text-base text-white/60">
-          Compatible with Windows 10 (version 1809 or later) or Windows 11, 64-bit.
+          Windows 10 (version 1809 or later) or Windows 11, 64-bit.
         </p>
       </div>
 
-      {/* 2 Download CTA Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-16">
-        {/* Installer (.EXE / .MSI) */}
-        <a
-          href="https://github.com/rajibjugi02-ctrl/Wisa/releases/latest/download/Wisa-Setup.exe"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-gradient-to-b from-white to-neutral-200 text-black hover:brightness-105 active:scale-[0.98] transition-all p-6 rounded-2xl shadow-xl flex flex-col justify-between group"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider bg-black/10 px-2.5 py-0.5 rounded-full">
-                Recommended
-              </span>
-              <Download className="w-5 h-5 text-black/60 group-hover:translate-y-0.5 transition-transform" />
-            </div>
-            <h3 className="text-lg font-bold tracking-tight">Download Installer</h3>
-            <p className="text-xs text-black/70 mt-1">
-              Wisa-Setup.exe (~5.2 MB)
+      {/* 2 Primary Download Pills (Nusa 1:1 Layout) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-16 items-start">
+        {/* Left: Direct EXE Installer */}
+        <div className="flex flex-col items-center">
+          <a
+            href="./WisaSetup.exe"
+            download="WisaSetup.exe"
+            className="w-full py-3.5 px-6 rounded-full bg-white text-black font-bold text-sm sm:text-base hover:bg-neutral-100 active:scale-[0.98] transition-all shadow-[0_10px_30px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2.5 group cursor-pointer"
+          >
+            <Download className="w-4 h-4 sm:w-5 sm:h-5 text-black group-hover:translate-y-0.5 transition-transform" />
+            <span>Download Installer (.exe)</span>
+          </a>
+          <div className="mt-3 text-center">
+            <p className="text-xs font-semibold text-white">
+              Direct Installer • <span className="text-emerald-400 font-bold">Recommended</span>
+            </p>
+            <p className="text-[11px] text-white/50 mt-1 max-w-xs leading-normal">
+              Direct setup application (~2.9 MB). Fast setup, no unzipping required.
             </p>
           </div>
-          <div className="mt-6 pt-3 border-t border-black/10 text-xs font-semibold text-black/80 flex items-center justify-between">
-            <span>Automated setup & desktop shortcut</span>
-            <span>→</span>
-          </div>
-        </a>
+        </div>
 
-        {/* Portable (.ZIP) */}
-        <a
-          href="https://github.com/rajibjugi02-ctrl/Wisa/releases/latest/download/Wisa-portable.zip"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-[#1c1c20] hover:bg-[#24242a] text-white border border-white/10 hover:border-white/25 active:scale-[0.98] transition-all p-6 rounded-2xl shadow-xl flex flex-col justify-between group"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-semibold text-white/50 bg-white/5 px-2.5 py-0.5 rounded-full border border-white/10">
-                Standalone
-              </span>
-              <FolderDown className="w-5 h-5 text-white/60 group-hover:translate-y-0.5 transition-transform" />
-            </div>
-            <h3 className="text-lg font-bold tracking-tight">Download Portable</h3>
-            <p className="text-xs text-white/60 mt-1">
-              Wisa-portable-1.2.0.zip (~4.8 MB)
+        {/* Right: Direct ZIP Download (Nusa style) */}
+        <div className="flex flex-col items-center">
+          <a
+            href="./WisaSetup.zip"
+            download="WisaSetup.zip"
+            className="w-full py-3.5 px-6 rounded-full bg-[#16161b] text-white border border-white/20 hover:border-cyan-400/60 hover:bg-[#202028] active:scale-[0.98] transition-all shadow-xl flex items-center justify-center gap-2.5 group cursor-pointer"
+          >
+            <FolderArchive className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 group-hover:translate-y-0.5 transition-transform" />
+            <span>Download ZIP</span>
+          </a>
+          <div className="mt-3 text-center">
+            <p className="text-xs font-semibold text-white">
+              Version 1.2.0 • <span className="text-cyan-400 font-bold">Classic installer</span>
+            </p>
+            <p className="text-[11px] text-white/50 mt-1 max-w-xs leading-normal">
+              For PCs without Microsoft Store. Contains WisaSetup.exe inside ZIP (~2.4 MB).
             </p>
           </div>
-          <div className="mt-6 pt-3 border-t border-white/10 text-xs text-white/70 flex items-center justify-between">
-            <span>No installation required • Run anywhere</span>
-            <span>→</span>
-          </div>
-        </a>
+        </div>
       </div>
 
       {/* How to Install & Use (4-Step Numbered Cards) */}
@@ -108,7 +96,7 @@ export const DownloadGuide: React.FC = () => {
             <div>
               <h4 className="text-sm font-bold text-white">Download the file</h4>
               <p className="text-xs text-white/60 mt-1 leading-relaxed">
-                Grab <code className="text-cyan-400">WisaSetup.exe</code> or the portable ZIP above.
+                Click <span className="text-cyan-400 font-medium">Download ZIP</span> or the direct installer above.
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-white/40">
@@ -122,9 +110,9 @@ export const DownloadGuide: React.FC = () => {
               2
             </span>
             <div>
-              <h4 className="text-sm font-bold text-white">Run the application</h4>
+              <h4 className="text-sm font-bold text-white">Run WisaSetup</h4>
               <p className="text-xs text-white/60 mt-1 leading-relaxed">
-                If Windows SmartScreen appears, click{" "}
+                Extract the ZIP and open <code className="text-cyan-400 font-medium">WisaSetup.exe</code>. If Windows SmartScreen appears, click{" "}
                 <span className="text-white font-medium">"More info"</span> then{" "}
                 <span className="text-cyan-400 font-medium">"Run anyway"</span>.
               </p>
@@ -142,11 +130,11 @@ export const DownloadGuide: React.FC = () => {
             <div>
               <h4 className="text-sm font-bold text-white">Wisa appears on top</h4>
               <p className="text-xs text-white/60 mt-1 leading-relaxed">
-                The notch pins seamlessly at the top center of your display without getting in the way.
+                The smart notch seamlessly docks at the top center of your display without getting in the way.
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-white/40">
-              Always on top & responsive
+              Always on top & fluid
             </div>
           </div>
 
@@ -193,4 +181,3 @@ export const DownloadGuide: React.FC = () => {
     </section>
   );
 };
-
