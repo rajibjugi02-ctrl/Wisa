@@ -35,7 +35,7 @@ const FAQS: FaqItem[] = [
   },
   {
     q: "How do I connect Gemini or ChatGPT?",
-    a: "Click the Gear icon in the bottom dock or press the settings button, navigate to the AI Assistant tab, and paste your free Google AI Studio key or OpenAI API key. The keys are stored exclusively in your local configuration.",
+    a: "Open Settings (Gear icon) -> AI Assistant, then paste your Google AI Studio or OpenAI API key. Google provides a 100% free Gemini API key with no credit card required at aistudio.google.com. Your key is saved exclusively on your local PC and never sent to anyone else.",
   },
   {
     q: "How do I quit or stop it starting with Windows?",

@@ -133,7 +133,7 @@ const SettingsGroup: React.FC<SettingsGroupProps> = ({ title, children }) => (
 /* Settings Row with Title & Controls */
 interface SettingsRowProps {
   title: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -761,7 +761,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <SettingsGroup title="API Configuration">
                   <SettingsRow
                     title="Gemini API Key"
-                    subtitle="Free tier key from Google AI Studio"
+                    subtitle={
+                      <span>
+                        Free tier key from Google AI Studio.{" "}
+                        <a
+                          href="https://aistudio.google.com/app/apikey"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-cyan-400 hover:underline inline-flex items-center gap-0.5 ml-1"
+                        >
+                          Get free key <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                      </span>
+                    }
                   >
                     <div className="flex items-center gap-2">
                       <span
@@ -803,7 +815,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                   <SettingsRow
                     title="OpenAI API Key"
-                    subtitle="Key from platform.openai.com"
+                    subtitle={
+                      <span>
+                        Key from platform.openai.com.{" "}
+                        <a
+                          href="https://platform.openai.com/api-keys"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-cyan-400 hover:underline inline-flex items-center gap-0.5 ml-1"
+                        >
+                          Get key <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                      </span>
+                    }
                   >
                     <div className="flex items-center gap-2">
                       <span
