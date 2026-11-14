@@ -2,6 +2,8 @@ name: Release Wisa for Windows
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*"
   workflow_dispatch:

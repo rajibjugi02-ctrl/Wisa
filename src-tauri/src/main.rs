@@ -52,7 +52,7 @@ async fn get_autostart_status() -> Result<bool, String> {
     {
         use std::process::Command;
         let output = Command::new("reg")
-            .args(["query", "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "NusaSmartNotch"])
+            .args(["query", "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "WisaSmartNotch"])
             .output();
         match output {
             Ok(out) => Ok(out.status.success()),
@@ -77,7 +77,7 @@ async fn set_autostart_status(enable: bool) -> Result<bool, String> {
                     "add",
                     "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
                     "/v",
-                    "NusaSmartNotch",
+                    "WisaSmartNotch",
                     "/t",
                     "REG_SZ",
                     "/d",
@@ -93,7 +93,7 @@ async fn set_autostart_status(enable: bool) -> Result<bool, String> {
                     "delete",
                     "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
                     "/v",
-                    "NusaSmartNotch",
+                    "WisaSmartNotch",
                     "/f",
                 ])
                 .status();

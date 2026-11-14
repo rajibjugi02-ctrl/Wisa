@@ -1,9 +1,9 @@
 import { invokeTauri, isTauriEnvironment } from "../lib/tauri-bridge";
 
-const AUTOSTART_STORAGE_KEY = "nusa_autostart_enabled";
+const AUTOSTART_STORAGE_KEY = "wisa_autostart_enabled";
 
 /**
- * Checks whether Nusa Notch is registered to start with Windows
+ * Checks whether Wisa Notch is registered to start with Windows
  */
 export async function checkWindowsAutostart(): Promise<boolean> {
   if (isTauriEnvironment()) {
