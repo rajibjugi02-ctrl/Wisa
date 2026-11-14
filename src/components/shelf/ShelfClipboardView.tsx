@@ -38,29 +38,23 @@ export const ShelfClipboardView: React.FC<ShelfClipboardViewProps> = ({
   onRemoveClip,
 }) => {
   const [activeTab, setActiveTab] = useState<"shelf" | "clipboard">("shelf");
-  const [shelfFiles, setShelfFiles] = useState<StagedFileItem[]>([
-    {
-      id: "demo-img-1",
-      name: "screen-mockup-visionos.png",
-      sizeBytes: 1024 * 512,
-      type: "image/png",
-      previewUrl:
-        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80",
-    },
-    {
-      id: "demo-pdf-2",
-      name: "nusa-design-tokens.pdf",
-      sizeBytes: 1024 * 1024 * 1.8,
-      type: "application/pdf",
-    },
-    {
-      id: "demo-folder-3",
-      name: "AppIcons_2026",
-      sizeBytes: 1024 * 1024 * 4.2,
-      type: "folder",
-      isFolder: true,
-    },
-  ]);
+  const [shelfFiles, setShelfFiles] = useState<StagedFileItem[]>(() => {
+    try {
+      const saved = localStorage.getItem("wisa_shelf_files");
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // fallback
+    }
+    return [];
+  });
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem("wisa_shelf_files", JSON.stringify(shelfFiles));
+    } catch {
+      // ignore
+    }
+  }, [shelfFiles]);
 
   const [isDragOver, setIsDragOver] = useState(false);
   const [copiedFileId, setCopiedFileId] = useState<string | null>(null);

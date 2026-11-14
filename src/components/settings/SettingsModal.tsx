@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Minus,
@@ -8,6 +9,7 @@ import {
   Eye,
   EyeOff,
   Power,
+  Bell,
 } from "lucide-react";
 import {
   AppSettings,
@@ -247,15 +249,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     window.close();
   };
 
-  return (
+  if (!isOpen) return null;
+
+  return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 10 }}
           transition={{ type: "spring", stiffness: 450, damping: 32 }}
-          className="w-[760px] h-[530px] max-w-[94vw] max-h-[90vh] bg-[#181818] rounded-2xl shadow-2xl border border-white/[0.08] overflow-hidden flex select-none"
+          className="w-[780px] h-[550px] max-w-[96vw] max-h-[92vh] bg-[#181818] rounded-2xl shadow-2xl border border-white/[0.08] overflow-hidden flex select-none"
         >
           {/* macOS Sidebar (Width 220px, #121212) */}
           <SettingsSidebar
@@ -276,7 +280,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <SettingsGroup title="Startup">
                   <SettingsRow
                     title="Start with Windows"
-                    subtitle="Automatically open Nusa when signing into your PC"
+                    subtitle="Automatically open Wisa when signing into your PC"
                   >
                     <Toggle
                       checked={settings.launchOnStartup}
@@ -285,6 +289,32 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         await setWindowsAutostart(v);
                       }}
                     />
+                  </SettingsRow>
+                </SettingsGroup>
+
+                <SettingsGroup title="Notifications">
+                  <SettingsRow
+                    title="Test Notification"
+                    subtitle="Trigger a sample toast to verify notch notifications"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.dispatchEvent(
+                          new CustomEvent("wisa-test-notification", {
+                            detail: {
+                              appName: "Wisa",
+                              title: "Notch Notification Test",
+                              body: "Real notification test triggered from Settings.",
+                            },
+                          })
+                        );
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-medium text-white transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Bell className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Send Test</span>
+                    </button>
                   </SettingsRow>
                 </SettingsGroup>
 
@@ -975,6 +1005,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </main>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };

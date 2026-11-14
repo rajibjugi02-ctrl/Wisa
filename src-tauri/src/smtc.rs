@@ -14,12 +14,12 @@ pub struct MediaTrackInfo {
 impl Default for MediaTrackInfo {
     fn default() -> Self {
         Self {
-            title: "Die With A Smile".to_string(),
-            artist: "Lady Gaga & Bruno Mars".to_string(),
-            album: "Die With A Smile".to_string(),
-            is_playing: true,
-            position_ms: 196000,
-            duration_ms: 252000,
+            title: "".to_string(),
+            artist: "".to_string(),
+            album: "".to_string(),
+            is_playing: false,
+            position_ms: 0,
+            duration_ms: 0,
             thumbnail_base64: None,
         }
     }

@@ -3,7 +3,8 @@ declare global {
     __TAURI_INTERNALS__?: unknown;
     electron?: {
       isElectron: boolean;
-      setNotchSize: (width: number, height: number) => void;
+      setNotchSize: (width: number, height: number, isSettings?: boolean) => void;
+      setIgnoreMouseEvents?: (ignore: boolean, options?: { forward: boolean }) => void;
       exitApp: () => void;
       openSettings: () => void;
       onOpenSettings: (callback: () => void) => void;
@@ -31,7 +32,11 @@ export async function invokeTauri<T = unknown>(
       return undefined as T;
     }
     if (cmd === "set_notch_size" && args) {
-      window.electron.setNotchSize(Number(args.width) || 640, Number(args.height) || 280);
+      window.electron.setNotchSize(
+        Number(args.width) || 640,
+        Number(args.height) || 280,
+        Boolean(args.isSettings)
+      );
       return undefined as T;
     }
     if (cmd === "open_settings_window") {
@@ -57,12 +62,12 @@ function getSimulatedFallback<T>(cmd: string): T {
   switch (cmd) {
     case "get_media_state":
       return {
-        title: "Die With A Smile",
-        artist: "Lady Gaga & Bruno Mars",
-        album: "Die With A Smile",
-        is_playing: true,
-        position_ms: 196000,
-        duration_ms: 252000,
+        title: "",
+        artist: "",
+        album: "",
+        is_playing: false,
+        position_ms: 0,
+        duration_ms: 0,
         thumbnail_base64: null,
       } as T;
     case "poll_notifications":

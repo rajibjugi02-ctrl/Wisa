@@ -79,7 +79,7 @@ export async function fetchLyricsFromLrclib(
 
     const response = await fetch(url.toString(), {
       headers: {
-        "User-Agent": "NusaNotch/1.2 (https://github.com/rama2555/nusa)",
+        "User-Agent": "WisaNotch/1.2 (https://github.com/rajibjugi02-ctrl/Wisa)",
       },
     });
 
@@ -100,7 +100,7 @@ export async function fetchLyricsFromLrclib(
 
     const searchRes = await fetch(searchUrl.toString(), {
       headers: {
-        "User-Agent": "NusaNotch/1.2 (https://github.com/rama2555/nusa)",
+        "User-Agent": "WisaNotch/1.2 (https://github.com/rajibjugi02-ctrl/Wisa)",
       },
     });
 

@@ -48,22 +48,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   todoReminderTaskStarts: true,
   todoReminderTimeUp: true,
   todoSnoozeMinutes: 10,
-  todoList: [
-    {
-      id: "todo-1",
-      title: "Review Wisa notch pull request",
-      completed: false,
-      focusMinutes: 25,
-      createdAt: Date.now() - 1000 * 60 * 30,
-    },
-    {
-      id: "todo-2",
-      title: "Export VisionOS optical glass tokens",
-      completed: true,
-      focusMinutes: 15,
-      createdAt: Date.now() - 1000 * 60 * 90,
-    },
-  ],
+  todoList: [],
 
   prayerShowPage: true,
   religionMode: "Islam (5 Waktu)",
@@ -118,9 +103,7 @@ export function App() {
 
   const [settings, setSettings] = useState<AppSettings>(() => {
     try {
-      const saved =
-        localStorage.getItem("wisa_settings") ||
-        localStorage.getItem("nusa_settings");
+      const saved = localStorage.getItem("wisa_settings");
       if (saved) {
         const parsed = JSON.parse(saved);
         return {
@@ -136,17 +119,8 @@ export function App() {
     return DEFAULT_SETTINGS;
   });
 
-  // On first run inside the desktop app, open SettingsModal automatically
-  const [isSettingsOpen, setIsSettingsOpen] = useState(() => {
-    if (isTauri || isElectron) {
-      const hasOpened = localStorage.getItem("wisa_first_run_settings");
-      if (!hasOpened) {
-        localStorage.setItem("wisa_first_run_settings", "true");
-        return true;
-      }
-    }
-    return false;
-  });
+  // Settings modal visibility
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -155,6 +129,16 @@ export function App() {
       // ignore
     }
   }, [settings]);
+
+  useEffect(() => {
+    if (isDesktopNotch) {
+      if (isSettingsOpen) {
+        // Expand window and center on screen for Settings
+        window.electron?.setNotchSize?.(880, 640, true);
+        window.electron?.setIgnoreMouseEvents?.(false);
+      }
+    }
+  }, [isSettingsOpen, isDesktopNotch]);
 
   useEffect(() => {
     const electron = (window as any).electron;
@@ -179,7 +163,15 @@ export function App() {
   if (isDesktopNotch) {
     return (
       <div className="relative min-h-screen w-full select-none overflow-hidden bg-transparent">
-        <main className="w-full flex justify-center items-start pt-1.5 z-40 relative">
+        <main
+          onMouseEnter={() => window.electron?.setIgnoreMouseEvents?.(false)}
+          onMouseLeave={() => {
+            if (!isSettingsOpen) {
+              window.electron?.setIgnoreMouseEvents?.(true, { forward: true });
+            }
+          }}
+          className="w-full flex justify-center items-start pt-1.5 z-40 relative"
+        >
           <IslandContainer
             settings={settings}
             onOpenSettings={() => setIsSettingsOpen(true)}

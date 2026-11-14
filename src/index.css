@@ -9,6 +9,13 @@
     box-sizing: border-box;
   }
 
+  html,
+  body,
+  #root {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
   body {
     user-select: none;
     -webkit-user-select: none;
@@ -50,15 +57,25 @@
     0 24px 48px -12px rgba(0, 0, 0, 0.75);
 }
 
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.visionos-glow {
+  position: relative;
 }
-
-.animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
+.visionos-glow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }

@@ -270,19 +270,20 @@ export const IslandContainer: React.FC<IslandContainerProps> = ({
     invokeTauri("set_notch_size", {
       width: targetWidth + 24,
       height: targetHeight + (hasIncomingNotif && !isPill ? 80 : 20),
+      isSettings: false,
     }).catch(() => {});
   }, [targetWidth, targetHeight, hasIncomingNotif, isPill]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      showNotification(
-        "WhatsApp",
-        "Sarah Jenkins",
-        "Can you send the design tokens for the Windows notch?"
-      );
-    }, 3500);
-    return () => clearTimeout(timer);
-  }, []);
+    const handleTestNotif = (e: Event) => {
+      const customEvent = e as CustomEvent<{ appName: string; title: string; body: string }>;
+      if (customEvent.detail) {
+        showNotification(customEvent.detail.appName, customEvent.detail.title, customEvent.detail.body);
+      }
+    };
+    window.addEventListener("wisa-test-notification", handleTestNotif);
+    return () => window.removeEventListener("wisa-test-notification", handleTestNotif);
+  }, [showNotification]);
 
   const getHeaderTitle = () => {
     switch (mode) {
@@ -303,7 +304,7 @@ export const IslandContainer: React.FC<IslandContainerProps> = ({
       case "assistant":
         return "AI Assistant";
       default:
-        return "Nusa Notch";
+        return "Wisa Notch";
     }
   };
 

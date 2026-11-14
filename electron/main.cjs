@@ -11,7 +11,7 @@ if (!gotTheLock) {
   app.quit();
 } else {
   app.on('second-instance', () => {
-    if (mainWindow) {
+    if (mainWindow && !mainWindow.isDestroyed()) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
       mainWindow.webContents.send('open-settings');
@@ -46,10 +46,11 @@ function createWindow() {
     y,
     frame: false,
     transparent: true,
+    backgroundColor: '#00000000',
+    hasShadow: false,
     alwaysOnTop: true,
     skipTaskbar: true,
     resizable: false,
-    hasShadow: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -80,7 +81,7 @@ function createTray() {
     {
       label: 'Open Wisa Settings',
       click: () => {
-        if (mainWindow) {
+        if (mainWindow && !mainWindow.isDestroyed()) {
           mainWindow.webContents.send('open-settings');
         }
       },
@@ -88,7 +89,7 @@ function createTray() {
     {
       label: 'Toggle Minimalist Mode',
       click: () => {
-        if (mainWindow) {
+        if (mainWindow && !mainWindow.isDestroyed()) {
           mainWindow.webContents.send('toggle-minimalist');
         }
       },
@@ -112,19 +113,50 @@ function createTray() {
   tray.setToolTip('Wisa Smart Notch');
   tray.setContextMenu(contextMenu);
   tray.on('click', () => {
-    if (mainWindow) {
+    if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('open-settings');
     }
   });
 }
 
 // IPC Handlers
-ipcMain.on('set-notch-size', (event, { width, height }) => {
-  if (mainWindow) {
+ipcMain.on('set-notch-size', (event, { width, height, isSettings }) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
     const primaryDisplay = screen.getPrimaryDisplay();
-    const { width: screenWidth } = primaryDisplay.workAreaSize;
-    const x = Math.round((screenWidth - width) / 2);
-    mainWindow.setBounds({ x, y: 0, width: Math.round(width), height: Math.round(height) });
+    const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
+
+    if (isSettings) {
+      // When Settings modal opens, expand window to roomy dimensions and center it
+      const targetW = 880;
+      const targetH = 640;
+      const targetX = Math.round((screenWidth - targetW) / 2);
+      const targetY = Math.round((screenHeight - targetH) / 2);
+      mainWindow.setBounds({
+        x: targetX,
+        y: targetY,
+        width: targetW,
+        height: targetH,
+      });
+      mainWindow.setIgnoreMouseEvents(false);
+    } else {
+      // Normal notch mode: top-center on display
+      const targetW = Math.round(width || 640);
+      const targetH = Math.round(height || 280);
+      const targetX = Math.round((screenWidth - targetW) / 2);
+      mainWindow.setBounds({
+        x: targetX,
+        y: 0,
+        width: targetW,
+        height: targetH,
+      });
+    }
+  }
+});
+
+ipcMain.on('set-ignore-mouse-events', (event, ignore, options) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win && !win.isDestroyed()) {
+    win.setIgnoreMouseEvents(ignore, options || { forward: true });
   }
 });
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { LyricLine, MediaState, SongTrack } from "../types/music";
-import { SAMPLE_TRACKS } from "../lib/lyrics-data";
-import { invokeTauri, isTauriEnvironment } from "../lib/tauri-bridge";
+import { EMPTY_TRACK } from "../lib/lyrics-data";
+import { invokeTauri, isTauriEnvironment, isElectronEnvironment } from "../lib/tauri-bridge";
 import { fetchLyricsFromLrclib } from "../services/lyricsService";
 import { extractCoverColors } from "../services/colorExtractor";
 
@@ -16,10 +16,9 @@ interface SmtcMediaTrackInfo {
 }
 
 export function useMediaSession(settingsShowLyrics?: boolean) {
-  const [trackIndex, setTrackIndex] = useState(0);
-  const [currentTrack, setCurrentTrack] = useState<SongTrack>(SAMPLE_TRACKS[0]);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [positionMs, setPositionMs] = useState(44000);
+  const [currentTrack, setCurrentTrack] = useState<SongTrack>(EMPTY_TRACK);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [positionMs, setPositionMs] = useState(0);
   const [showLyrics, setShowLyrics] = useState(settingsShowLyrics ?? false);
   const [volume, setVolume] = useState(0.85);
 
@@ -35,26 +34,33 @@ export function useMediaSession(settingsShowLyrics?: boolean) {
 
   /* Update active track from Windows SMTC session */
   const syncWithWindowsSmtc = useCallback(async () => {
-    if (!isTauriEnvironment()) return;
+    const isDesktop = isTauriEnvironment() || isElectronEnvironment();
+    if (!isDesktop) return;
 
     try {
       const smtcInfo = await invokeTauri<SmtcMediaTrackInfo>("get_media_state");
-      if (!smtcInfo || !smtcInfo.title) return;
+      if (!smtcInfo || !smtcInfo.title || smtcInfo.title.trim() === "") {
+        // No media active in Windows
+        if (currentTrack.id !== "empty-track") {
+          setCurrentTrack(EMPTY_TRACK);
+          setIsPlaying(false);
+          setPositionMs(0);
+        }
+        return;
+      }
 
       const trackKey = `${smtcInfo.artist}-${smtcInfo.title}`;
       setIsPlaying(smtcInfo.is_playing);
-      setPositionMs(smtcInfo.position_ms);
+      setPositionMs(smtcInfo.position_ms || 0);
 
       // Only fetch new lyrics and colors when song title/artist changes
       if (trackKey !== lastTrackKeyRef.current) {
         lastTrackKeyRef.current = trackKey;
 
-        const coverSrc =
-          smtcInfo.thumbnail_base64 ||
-          SAMPLE_TRACKS[trackIndex % SAMPLE_TRACKS.length].coverUrl;
-
-        // Extract real RGB ambient colors from cover image
-        const ambientColors = await extractCoverColors(coverSrc);
+        const coverSrc = smtcInfo.thumbnail_base64 || "";
+        const ambientColors: [string, string] = coverSrc
+          ? await extractCoverColors(coverSrc)
+          : ["#18181b", "#09090b"];
 
         // Fetch real synced lyrics from LRCLIB API
         const fetchedLyrics = await fetchLyricsFromLrclib(
@@ -63,39 +69,41 @@ export function useMediaSession(settingsShowLyrics?: boolean) {
           smtcInfo.album
         );
 
-        const formattedLyrics: LyricLine[] =
-          fetchedLyrics.length > 0
-            ? fetchedLyrics.map((l, idx) => ({ id: idx, timeMs: l.timeMs, text: l.text }))
-            : SAMPLE_TRACKS[trackIndex % SAMPLE_TRACKS.length].lyrics;
+        const formattedLyrics: LyricLine[] = fetchedLyrics.map((l, idx) => ({
+          id: idx,
+          timeMs: l.timeMs,
+          text: l.text,
+        }));
 
         setCurrentTrack({
           id: `smtc-${Date.now()}`,
           title: smtcInfo.title,
           artist: smtcInfo.artist || "Unknown Artist",
-          album: smtcInfo.album || "Unknown Album",
+          album: smtcInfo.album || "",
           coverUrl: coverSrc,
-          durationMs: smtcInfo.duration_ms || 210000,
+          durationMs: smtcInfo.duration_ms || 0,
           ambientColors,
           lyrics: formattedLyrics,
         });
       }
     } catch {
-      // Continue with local state on failure
+      // Keep silent on IPC failure
     }
-  }, [trackIndex]);
+  }, [currentTrack.id]);
 
   /* Poll Windows SMTC every 1.5 seconds */
   useEffect(() => {
-    if (isTauriEnvironment()) {
+    const isDesktop = isTauriEnvironment() || isElectronEnvironment();
+    if (isDesktop) {
       syncWithWindowsSmtc();
       const interval = setInterval(syncWithWindowsSmtc, 1500);
       return () => clearInterval(interval);
     }
   }, [syncWithWindowsSmtc]);
 
-  /* Smooth tick between polling intervals */
+  /* Smooth tick only when real media is actively playing */
   useEffect(() => {
-    if (!isPlaying) {
+    if (!isPlaying || currentTrack.durationMs <= 0) {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
       return;
     }
@@ -130,43 +138,29 @@ export function useMediaSession(settingsShowLyrics?: boolean) {
 
   const togglePlayPause = async () => {
     setIsPlaying((prev) => !prev);
-    if (isTauriEnvironment()) {
-      await invokeTauri("media_play_pause").catch(async () => {
-        await invokeTauri("send_media_command", { action: "toggle" }).catch(() => {});
-      });
-    }
+    await invokeTauri("media_play_pause").catch(async () => {
+      await invokeTauri("send_media_command", { action: "toggle" }).catch(() => {});
+    });
   };
 
   const nextTrack = async () => {
-    if (isTauriEnvironment()) {
-      await invokeTauri("media_next").catch(async () => {
-        await invokeTauri("send_media_command", { action: "next" }).catch(() => {});
-      });
-      setTimeout(syncWithWindowsSmtc, 400);
-    } else {
-      const nextIdx = (trackIndex + 1) % SAMPLE_TRACKS.length;
-      setTrackIndex(nextIdx);
-      setCurrentTrack(SAMPLE_TRACKS[nextIdx]);
-      setPositionMs(0);
-    }
+    await invokeTauri("media_next").catch(async () => {
+      await invokeTauri("send_media_command", { action: "next" }).catch(() => {});
+    });
+    setTimeout(syncWithWindowsSmtc, 300);
   };
 
   const prevTrack = async () => {
-    if (isTauriEnvironment()) {
-      await invokeTauri("media_prev").catch(async () => {
-        await invokeTauri("send_media_command", { action: "previous" }).catch(() => {});
-      });
-      setTimeout(syncWithWindowsSmtc, 400);
-    } else {
-      const prevIdx = (trackIndex - 1 + SAMPLE_TRACKS.length) % SAMPLE_TRACKS.length;
-      setTrackIndex(prevIdx);
-      setCurrentTrack(SAMPLE_TRACKS[prevIdx]);
-      setPositionMs(0);
-    }
+    await invokeTauri("media_prev").catch(async () => {
+      await invokeTauri("send_media_command", { action: "previous" }).catch(() => {});
+    });
+    setTimeout(syncWithWindowsSmtc, 300);
   };
 
   const seekTo = (ms: number) => {
-    setPositionMs(Math.max(0, Math.min(ms, currentTrack.durationMs)));
+    if (currentTrack.durationMs > 0) {
+      setPositionMs(Math.max(0, Math.min(ms, currentTrack.durationMs)));
+    }
   };
 
   const toggleLyrics = () => setShowLyrics((prev) => !prev);

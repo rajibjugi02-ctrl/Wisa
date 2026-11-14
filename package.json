@@ -11,13 +11,15 @@
     "tauri": "tauri",
     "electron:start": "electron electron/main.cjs",
     "electron:dev": "vite build && electron electron/main.cjs",
+    "dist": "npm run build && electron-builder --win nsis portable",
+    "build:win": "npm run build && electron-builder --win nsis portable",
     "package": "npm run build && electron-builder --win nsis portable"
   },
   "build": {
     "appId": "com.wisa.smartnotch",
     "productName": "Wisa",
     "directories": {
-      "output": "release-electron"
+      "output": "release"
     },
     "files": [
       "dist/**/*",
@@ -35,8 +37,11 @@
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "artifactName": "WisaSetup.exe",
+      "artifactName": "Wisa-Setup-1.2.0.exe",
       "runAfterFinish": true
+    },
+    "portable": {
+      "artifactName": "Wisa-Portable-1.2.0.exe"
     }
   },
   "dependencies": {

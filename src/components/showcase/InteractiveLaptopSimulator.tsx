@@ -122,10 +122,10 @@ export const InteractiveLaptopSimulator: React.FC = () => {
   // Auto-cycle through lyrics lines for preview
   const [lyricIndex, setLyricIndex] = useState(0);
   const sampleLyrics = [
-    "If the world was ending, I'd wanna be next to you",
-    "If the party was over and our time on Earth was through",
-    "I'd wanna hold you just for a while",
-    "And die with a smile",
+    "Synced lyrics floating seamlessly right on your Windows desktop",
+    "Live integration with Spotify, Apple Music, and LRCLIB",
+    "Real-time audio waveform and fluid VisionOS glassmorphism",
+    "Dynamic ambient glow reflecting album colors",
   ];
 
   useEffect(() => {
@@ -243,16 +243,16 @@ export const InteractiveLaptopSimulator: React.FC = () => {
                   >
                     <div className="absolute inset-0 bg-gradient-to-t from-rose-500/20 via-orange-500/10 to-transparent pointer-events-none" />
                     <div className="flex items-center justify-between text-xs text-white/60 mb-3 relative z-10">
-                      <span className="font-bold text-white">Die With A Smile</span>
-                      <span className="font-mono text-[11px] text-white/80">03:16 / 04:12</span>
+                      <span className="font-bold text-white">Live Media Session</span>
+                      <span className="font-mono text-[11px] text-white/80">02:15 / 03:45</span>
                     </div>
                     <div className="flex items-center gap-3 relative z-10">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-amber-600 flex items-center justify-center shadow-lg shrink-0">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center shadow-lg shrink-0">
                         <Music className="w-6 h-6 text-white" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="text-sm font-bold text-white truncate">Die With A Smile</h4>
-                        <p className="text-xs text-white/60 truncate">Lady Gaga & Bruno Mars</p>
+                        <h4 className="text-sm font-bold text-white truncate">Windows Media SMTC</h4>
+                        <p className="text-xs text-white/60 truncate">Spotify & System Audio Sync</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
@@ -342,11 +342,11 @@ export const InteractiveLaptopSimulator: React.FC = () => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-white truncate">WhatsApp</span>
+                        <span className="font-bold text-white truncate">Windows System</span>
                         <span className="text-[10px] text-white/40">Just now</span>
                       </div>
                       <p className="text-xs text-white/80 truncate mt-0.5">
-                        Sarah: Hey, are we still meeting at 3 PM?
+                        Calendar: Design team sync starts in 10 minutes
                       </p>
                     </div>
                   </motion.div>
@@ -403,7 +403,7 @@ export const InteractiveLaptopSimulator: React.FC = () => {
                       <span className="text-[11px] text-amber-400">Drag & drop ready</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {["screen-mockup.png", "wisa-tokens.json", "AppIcon.ico"].map((file, i) => (
+                      {["ProjectBrief.pdf", "wisa-tokens.json", "AppIcon.ico"].map((file, i) => (
                         <div
                           key={file}
                           className="flex-1 bg-white/[0.06] border border-white/10 rounded-xl p-2 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-white/10 transition-colors"
